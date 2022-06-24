@@ -20,7 +20,6 @@ router.post('/login', function(request, response, next){
     var user_email_address = request.body.user_email_address;
 
     var user_password = request.body.user_password;
-    console.log(user_password);;
 
     if(user_email_address && user_password)
     {
@@ -28,10 +27,6 @@ router.post('/login', function(request, response, next){
         SELECT * FROM register 
         WHERE email = "${user_email_address}" AND password="${user_password}"
         `;
-        // query = `
-        // SELECT * FROM login 
-        // WHERE email = "${user_email_address}"
-        // `;
 
         database.query(query, function(error, data){
 
@@ -41,15 +36,8 @@ router.post('/login', function(request, response, next){
                 {
                     if(data[count].password == user_password)
                     {
-                        console.log("password matched");
-
-                        // session variable is not getting value error
                         request.session.uID = data[0].userId;
                         request.session.uname = data[0].username;
-                        console.log(request.session.uID);
-                        console.log(request.session.uname);
-                        console.log("login Successfull");
-
                         response.redirect("/");
                     }
                     else
@@ -101,10 +89,12 @@ router.post('/register', function(request, response, next){
             {
                 InsertQuery = `INSERT INTO register(username, password, name, email) VALUES ("${username}","${user_password}","${name}","${user_email_address}")`;
                 database.query(InsertQuery, function(error, data){
-                    if(error) response.status(500).send('Some internal error occured');
+                    if(error) {
+                        response.status(500).send('Some internal error occured');
+                    }
                     else {
                         response.send('Register Successfully...');
-                        response.redirect("/");     // change to feed page
+                        // response.redirect("/dashboard");     // change to feed page
                     }
                 });
 
